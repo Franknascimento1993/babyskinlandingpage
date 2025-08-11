@@ -582,9 +582,18 @@
         text.appendChild(title);
         text.appendChild(line);
 
-        const prices = [99.90, 179.90, 229.90];        // unitários possíveis
-const price = prices[Math.floor(Math.random()*prices.length)];
+        // Lista de preços possíveis
+const prices = [99.90, 179.90, 229.90];
+
+// Escolhe um preço aleatório
+const price = prices[Math.floor(Math.random() * prices.length)];
+
+// Formata em BRL
+const formatBRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+// Mostra no badge com preço x quantidade
 badge.textContent = formatBRL.format(price * qty);
+
 
 
         t.appendChild(av); t.appendChild(text); t.appendChild(badge);
