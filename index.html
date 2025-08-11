@@ -115,22 +115,15 @@
       transition:transform .18s ease, box-shadow .25s ease;
       text-transform:uppercase;letter-spacing:.4px;font-size:14px;line-height:1.2;
       white-space:nowrap;display:inline-block;text-align:center;-webkit-tap-highlight-color:transparent;user-select:none;
+      animation: pulseGlow 2.8s ease-in-out infinite;
     }
     .btn:hover, .buy:hover{ transform:translateY(-2px) scale(1.02); box-shadow:0 10px 28px rgba(228,71,122,.42); }
     .btn-row{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px }
 
-    /* Animação sutil e iluminada nos botões */
     @keyframes pulseGlow {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 6px 18px var(--pink-soft), 0 0 0 rgba(228,71,122,0.4);
-      }
-      50% {
-        transform: scale(1.03);
-        box-shadow: 0 6px 22px rgba(228,71,122,0.6), 0 0 12px rgba(228,71,122,0.6);
-      }
+      0%, 100% { transform: scale(1); box-shadow: 0 6px 18px var(--pink-soft), 0 0 0 rgba(228,71,122,0.4); }
+      50% { transform: scale(1.03); box-shadow: 0 6px 22px rgba(228,71,122,0.6), 0 0 12px rgba(228,71,122,0.6); }
     }
-    .btn, .buy { animation: pulseGlow 2.8s ease-in-out infinite; }
 
     /* Bandeiras (cores de marca) */
     .payments{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:8px}
@@ -156,7 +149,28 @@
     /* Reveal */
     .fade-up{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
     .in-view{opacity:1;transform:translateY(0)}
-    
+
+    /* Widget */
+    .sales-widget{
+      position:fixed;right:22px;bottom:22px;z-index:9999;
+      display:flex;flex-direction:column;gap:10px;max-width:340px;
+      backdrop-filter:saturate(140%) blur(10px);
+    }
+    .sw-card{
+      background:linear-gradient(180deg, rgba(18,18,24,.92), rgba(18,18,24,.86));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;padding:14px 16px;color:#fff;
+      box-shadow:0 18px 40px rgba(0,0,0,.45);
+    }
+    .sw-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .sw-dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%, var(--lilas), var(--pink));box-shadow:0 0 16px rgba(228,71,122,.5)}
+    .sw-title{font-weight:900;letter-spacing:.2px;font-size:14px}
+    .sw-row{display:flex;justify-content:space-between;align-items:center;margin:8px 0 10px}
+    .sw-badge{font-size:11px;font-weight:900;padding:6px 10px;border-radius:999px;background:rgba(53,209,138,.12);border:1px solid rgba(53,209,138,.35)}
+    .sw-viewers{font-size:12px;color:var(--muted)}
+    .sw-bar{position:relative;height:10px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .sw-fill{position:absolute;inset:0;width:100%;background:linear-gradient(90deg,var(--pink), var(--purple), var(--lilas));box-shadow:0 0 20px rgba(228,71,122,.32)}
+    .sw-foot{font-size:11px;color:var(--muted);margin-top:6px}
 
     /* Toasts */
     .toasts{display:flex;flex-direction:column;gap:10px}
@@ -167,7 +181,7 @@
     .t-line{font-size:12px;color:var(--muted)}
     .t-badge{font-size:11px;font-weight:900;padding:6px 10px;border-radius:999px;background:rgba(53,209,138,.12);border:1px solid rgba(53,209,138,.35)}
 
-    /* Mobile & breakpoints (empilhamento seguro) */
+    /* Mobile & breakpoints */
     @media (max-width:1024px){
       .grid-3{grid-template-columns:repeat(2,1fr)}
       .ingredients,.plans{grid-template-columns:repeat(2,1fr)}
@@ -179,8 +193,6 @@
       .panel{padding:18px}
       .hero-banners{padding:18px;min-height:76px}
     }
-
-    /* Botões responsivos */
     @media (max-width:520px){
       .btn-row{ flex-direction:column; gap:12px; align-items:stretch; }
       .btn-row a{ width:100%; max-width:none; flex:0 0 auto; padding:12px 14px; }
@@ -417,7 +429,27 @@
     </section>
 
   </div><!-- /wrap -->
-  
+
+  <!-- Widget de Vendas e Estoque -->
+  <aside class="sales-widget" id="salesWidget" aria-label="Status de estoque e interesse">
+    <div class="sw-card">
+      <div class="sw-head">
+        <span class="sw-dot" aria-hidden="true"></span>
+        <div class="sw-title">Estoque em tempo real</div>
+      </div>
+      <div class="sw-row">
+        <div class="sw-viewers" id="swViewers">—</div>
+        <div class="sw-badge" id="swBadge">Disponível</div>
+      </div>
+      <div class="sw-bar" aria-hidden="true">
+        <div class="sw-fill" id="swFill"></div>
+      </div>
+      <div class="sw-foot" id="swFoot">*Atualização automática</div>
+      <div class="toasts" id="swToasts" aria-live="polite" aria-relevant="additions text"></div>
+    </div>
+  </aside>
+
+  <script>
     // Reveal on scroll
     const reveal = () => {
       document.querySelectorAll('.fade-up').forEach(el => {
@@ -464,244 +496,121 @@
       });
     });
 
+    // ===== WIDGET – compras simuladas + estoque em tempo real (apenas "Baixo estoque") =====
+    (function(){
+      const elViewers = document.getElementById('swViewers');
+      const elFill    = document.getElementById('swFill');
+      const elBadge   = document.getElementById('swBadge');
+      const elToasts  = document.getElementById('swToasts');
+
+      const CONFIG = {
+        initialStock: 120,
+        stock: 120,
+        minPerOrder: 1,
+        maxPerOrder: 3,
+        minDelayMs: 5000,
+        maxDelayMs: 11000,
+        minViewers: 21,
+        maxViewers: 89,
+        lowStockThreshold: 18,
+        toastTTL: 6000
+      };
+
+      // Preços sorteados
+      const PRICES = [99.90, 179.90, 229.90];
+      const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      const NAMES = ['Ana','Bruna','Camila','Daniela','Eduarda','Fernanda','Gabriela','Helena','Isabela','Júlia','Karina','Larissa','Marina','Natália','Olívia','Patrícia','Rafaela','Sabrina','Talita','Valentina','Yasmim','Zoe','Bianca','Carolina','Letícia','Nicole','Sophia','Manuela','Luiza','Alice','Laura','Beatriz','Clara','Lívia','Lorena','Heloísa','Ester','Agatha'];
+      const CITIES = ['São Paulo, SP','Rio de Janeiro, RJ','Belo Horizonte, MG','Brasília, DF','Curitiba, PR','Porto Alegre, RS','Florianópolis, SC','Salvador, BA','Fortaleza, CE','Recife, PE','Goiânia, GO','Vitória, ES','Manaus, AM','Belém, PA','Natal, RN','Campinas, SP','Ribeirão Preto, SP','Santos, SP','São José dos Campos, SP','Sorocaba, SP'];
+
+      const clamp=(n,min,max)=> Math.max(min, Math.min(max, n));
+      const rand =(min,max)=> Math.floor(Math.random()*(max-min+1))+min;
+      const pick = arr=> arr[Math.floor(Math.random()*arr.length)];
+      const initials = name => name.split(/\s+/).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+
+      function renderStock(){
+        const pct = clamp(CONFIG.stock/CONFIG.initialStock, 0, 1);
+        elFill.style.width = (pct*100).toFixed(0)+'%';
+
+        if (CONFIG.stock <= CONFIG.lowStockThreshold && CONFIG.stock > 0){
+          elBadge.textContent = 'Baixo estoque';
+          elBadge.style.background = 'rgba(245,158,11,.16)';
+          elBadge.style.borderColor = 'rgba(245,158,11,.42)';
+        } else {
+          elBadge.textContent = 'Disponível';
+          elBadge.style.background = 'rgba(53,209,138,.12)';
+          elBadge.style.borderColor = 'rgba(53,209,138,.35)';
+        }
+      }
+
+      function tickViewers(){
+        elViewers.textContent = `${rand(CONFIG.minViewers, CONFIG.maxViewers)} pessoas estão vendo agora`;
+      }
+
+      function showToast({name, city, qty, payment}){
+        const t = document.createElement('div');
+        t.className = 'toast';
+
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        av.textContent = initials(name);
+
+        const text = document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 't-name';
+        title.textContent = `${name} comprou ${qty} ${qty>1?'unidades':'unidade'}`;
+
+        const line = document.createElement('div');
+        line.className = 't-line';
+        line.textContent = `${city} • ${payment} • agora mesmo`;
+
+        text.appendChild(title);
+        text.appendChild(line);
+
+        const badge = document.createElement('div');
+        badge.className = 't-badge';
+        const price = pick(PRICES);
+        badge.textContent = BRL.format(price * qty);
+
+        t.appendChild(av); t.appendChild(text); t.appendChild(badge);
+        elToasts.prepend(t);
+
+        setTimeout(()=>{ t.style.opacity='.0'; t.style.transform='translateY(8px)'; setTimeout(()=>t.remove(), 400); }, CONFIG.toastTTL);
+      }
+
+      function schedulePurchase(){
+        const delay = rand(CONFIG.minDelayMs, CONFIG.maxDelayMs);
+        setTimeout(()=>{
+          // evita zerar estoque — mantém 1 para sustentar o "Baixo estoque"
+          const qty = clamp(rand(CONFIG.minPerOrder, CONFIG.maxPerOrder), 1, Math.max(1, CONFIG.stock));
+          if (CONFIG.stock > 1) CONFIG.stock -= qty;
+          renderStock();
+
+          showToast({
+            name: pick(NAMES),
+            city: pick(CITIES),
+            qty,
+            payment: Math.random()<.6 ? 'PIX' : 'Cartão'
+          });
+
+          schedulePurchase();
+        }, delay);
+      }
+
+      // Inicializa
+      renderStock();
+      tickViewers();
+      setInterval(tickViewers, 4000);
+      schedulePurchase();
+
       // API simples pra testes no console
       window.BabySkinWidget = {
-        setStock(n){ CONFIG.stock = Math.max(0, Number(n)||0); renderStock(); },
-        addStock(n){ CONFIG.stock = Math.min(9999, CONFIG.stock + Math.max(0, Number(n)||0)); renderStock(); },
-        buy(q){ const qty = Math.min(CONFIG.stock, Math.max(1, Number(q)||1)); if(qty>0){ CONFIG.stock -= qty; renderStock(); showToast({name:pick(NAMES), city:pick(CITIES), qty, payment:'Cartão'});} },
+        setStock(n){ CONFIG.stock = Math.max(1, Number(n)||1); renderStock(); },
+        addStock(n){ CONFIG.stock = Math.max(1, CONFIG.stock + Math.max(0, Number(n)||0)); renderStock(); },
+        buy(q){ const qty = Math.max(1, Math.min(CONFIG.stock, Number(q)||1)); if(CONFIG.stock>1){ CONFIG.stock -= qty; renderStock(); showToast({name:pick(NAMES), city:pick(CITIES), qty, payment:'Cartão'});} },
         config: CONFIG
       };
     })();
   </script>
-          <!-- ================= WIDGET BABY SKIN ================= -->
-<div id="sales-widget" aria-live="polite"></div>
-
-<style>
-  /* ====== ESTILOS DO WIDGET (isolados) ====== */
-  :root{
-    /* fallback sutil caso as vars não existam na página */
-    --pink: var(--pink, #E1306C);
-    --purple: var(--purple, #833AB4);
-    --ink: var(--ink, #ffffff);
-  }
-
-  #sales-widget{
-    position: fixed;
-    right: 22px;
-    bottom: 22px;
-    z-index: 9999;
-    max-width: 360px;
-    font-family: Manrope, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    color: var(--ink);
-  }
-
-  #sales-widget .bsw-card{
-    position: relative;
-    border-radius: 18px;
-    padding: 14px;
-    background: rgba(15, 12, 20, .82);
-    border: 1px solid rgba(255,255,255,.10);
-    backdrop-filter: saturate(130%) blur(10px);
-    box-shadow: 0 18px 40px rgba(0,0,0,.45);
-    overflow: hidden;
-  }
-
-  #sales-widget .bsw-head{
-    display:flex; align-items:center; gap:10px; margin-bottom:10px;
-  }
-  #sales-widget .bsw-dot{
-    width:10px; height:10px; border-radius:50%;
-    background: radial-gradient(circle at 35% 35%, var(--pink), var(--purple));
-    box-shadow: 0 0 16px rgba(225,48,108,.55);
-  }
-  #sales-widget .bsw-title{ font-weight:800; letter-spacing:.2px }
-
-  #sales-widget .bsw-row{
-    display:flex; justify-content:space-between; align-items:center; margin:8px 0 10px;
-  }
-  #sales-widget .bsw-stock{ font-weight:800; font-size:22px }
-
-  #sales-widget .bsw-badge{
-    font-size:12px; font-weight:800; padding:6px 10px; border-radius:999px;
-    background: rgba(53, 209, 138, .12); border:1px solid rgba(53,209,138,.35);
-  }
-  #sales-widget .bsw-badge.low{
-    background: rgba(245,158,11,.16); border-color: rgba(245,158,11,.42); color: #ffd9a1;
-  }
-
-  #sales-widget .bsw-bar{ height:10px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; border:1px solid rgba(255,255,255,.12) }
-  #sales-widget .bsw-fill{ height:100%; width:100%; transform-origin:left center;
-    background: linear-gradient(90deg, var(--pink), var(--purple)); box-shadow: 0 0 16px rgba(225,48,108,.35) }
-
-  #sales-widget .bsw-toasts{ display:flex; flex-direction:column; gap:10px; margin-top:12px }
-  #sales-widget .bsw-toast{
-    display:grid; grid-template-columns:40px 1fr auto; gap:10px; align-items:center;
-    background: rgba(16,14,22,.92); border:1px solid rgba(255,255,255,.08); border-radius:14px;
-    padding:10px 12px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
-    transform: translateY(8px); opacity: 0; transition: .35s ease;
-  }
-  #sales-widget .bsw-toast.in{ transform:none; opacity:1 }
-  #sales-widget .bsw-ava{
-    width:40px; height:40px; border-radius:50%; display:grid; place-items:center; font-weight:800;
-    background: linear-gradient(180deg, var(--pink), var(--purple)); color:#fff;
-    box-shadow: inset 0 0 0 2px rgba(255,255,255,.18);
-  }
-  #sales-widget .bsw-name{ font-weight:800; font-size:14px }
-  #sales-widget .bsw-line{ font-size:12px; opacity:.8 }
-  #sales-widget .bsw-price{
-    font-size:12px; font-weight:800; padding:6px 10px; border-radius:999px;
-    background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12)
-  }
-
-  /* Mobile: menor e mais discreto */
-  @media (max-width: 520px){
-    #sales-widget{ left: 14px; right: 14px; bottom: 14px; max-width:none; transform: scale(.92); transform-origin: right bottom; }
-  }
-</style>
-
-<script>
-(function(){
-  /* ====== CONFIG ====== */
-  const CONFIG = {
-    initialStock: 120,                 // estoque inicial
-    lowStockThreshold: 18,             // mostra apenas "Baixo estoque" (nunca 'Esgotado')
-    minDelayMs: 3500,
-    maxDelayMs: 9000,
-    minPerOrder: 1,
-    maxPerOrder: 3,
-    showViewers: true,
-    minViewers: 21,
-    maxViewers: 89,
-    autoStart: true,
-    toastTTL: 6000
-  };
-
-  /* ====== PREÇOS (sorteio) ====== */
-  const PRICES = [99.90, 179.90, 229.90];
-  const BRL = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
-
-  /* ====== DADOS ====== */
-  const NAMES = ['Ana','Bruna','Camila','Daniela','Eduarda','Fernanda','Gabriela','Helena','Isabela','Júlia','Karina','Larissa','Marina','Natália','Olívia','Patrícia','Rafaela','Sabrina','Talita','Valentina','Beatriz','Luiza','Alice','Laura','Nicole','Sophia','Manuela','Clara','Lívia','Lorena'];
-  const CITIES = ['São Paulo, SP','Rio de Janeiro, RJ','Belo Horizonte, MG','Brasília, DF','Curitiba, PR','Porto Alegre, RS','Salvador, BA','Recife, PE','Fortaleza, CE','Florianópolis, SC','Goiânia, GO','Vitória, ES','Campinas, SP','Ribeirão Preto, SP'];
-
-  /* ====== ESTADO ====== */
-  let stock = CONFIG.initialStock;
-  let running = CONFIG.autoStart;
-  let timerId = null;
-
-  /* ====== HELPERS ====== */
-  const $ = sel => document.querySelector(sel);
-  const elRoot = $('#sales-widget');
-
-  // cria estrutura HTML do widget
-  elRoot.innerHTML = `
-    <div class="bsw-card">
-      <div class="bsw-head">
-        <div class="bsw-dot" aria-hidden="true"></div>
-        <div>
-          <div class="bsw-title">Estoque em tempo real</div>
-          <div class="bsw-line" id="bsw-viewers">–</div>
-        </div>
-      </div>
-
-      <div class="bsw-row">
-        <div class="bsw-stock"><span id="bsw-count">—</span> unid.</div>
-        <div class="bsw-badge" id="bsw-badge">Disponível</div>
-      </div>
-
-      <div class="bsw-bar"><div class="bsw-fill" id="bsw-fill"></div></div>
-
-      <div class="bsw-toasts" id="bsw-toasts" aria-live="polite" aria-relevant="additions text"></div>
-    </div>
-  `;
-
-  const elCount  = $('#bsw-count');
-  const elBadge  = $('#bsw-badge');
-  const elFill   = $('#bsw-fill');
-  const elToasts = $('#bsw-toasts');
-  const elView   = $('#bsw-viewers');
-
-  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
-  function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-  function initials(name){ return name.split(/\s+/).slice(0,2).map(p=>p[0]).join('').toUpperCase(); }
-
-  function renderStock(){
-    elCount.textContent = stock;
-    const pct = clamp(stock / CONFIG.initialStock, 0, 1);
-    elFill.style.transform = `scaleX(${pct})`;
-
-    if (stock <= CONFIG.lowStockThreshold && stock > 0){
-      elBadge.textContent = 'Baixo estoque';
-      elBadge.classList.add('low');
-    } else {
-      elBadge.textContent = 'Disponível';
-      elBadge.classList.remove('low');
-    }
-  }
-
-  function tickViewers(){
-    if(!CONFIG.showViewers) return;
-    elView.textContent = `${rand(CONFIG.minViewers, CONFIG.maxViewers)} pessoas estão vendo agora`;
-  }
-
-  function showToast({name, city, qty, payment}){
-    const price = pick(PRICES);
-    const t = document.createElement('div');
-    t.className = 'bsw-toast';
-
-    t.innerHTML = `
-      <div class="bsw-ava">${initials(name)}</div>
-      <div style="min-width:0">
-        <div class="bsw-name">${name} comprou ${qty} ${qty>1?'unidades':'unidade'}</div>
-        <div class="bsw-line">${city} • ${payment} • agora mesmo</div>
-      </div>
-      <div class="bsw-price">${BRL.format(price * qty)}</div>
-    `;
-
-    elToasts.prepend(t);
-    requestAnimationFrame(()=> t.classList.add('in'));
-    setTimeout(()=>{ t.classList.remove('in'); setTimeout(()=>t.remove(), 350); }, CONFIG.toastTTL);
-  }
-
-  function scheduleNext(){
-    clearTimeout(timerId);
-    if(!running) return;
-    const delay = rand(CONFIG.minDelayMs, CONFIG.maxDelayMs);
-    timerId = setTimeout(()=> {
-      // evita chegar a 0 (nunca exibe "esgotado")
-      const qty = clamp(rand(CONFIG.minPerOrder, CONFIG.maxPerOrder), 1, Math.max(1, stock));
-      if (stock > 1) stock -= qty;           // deixa no mínimo 1
-      renderStock();
-
-      showToast({
-        name: pick(NAMES),
-        city: pick(CITIES),
-        qty,
-        payment: Math.random()<.6 ? 'PIX' : 'Cartão'
-      });
-
-      scheduleNext();
-    }, delay);
-  }
-
-  // API global opcional
-  window.BabySkinWidget = {
-    setStock(n){ stock = Math.max(1, Number(n)||1); renderStock(); },
-    addStock(n){ stock += Math.max(0, Number(n)||0); renderStock(); },
-    pause(){ running=false; clearTimeout(timerId); },
-    resume(){ if(stock<=0) stock=1; running=true; scheduleNext(); },
-    config: CONFIG
-  };
-
-  // start
-  renderStock();
-  tickViewers();
-  setInterval(tickViewers, 4000);
-  scheduleNext();
-})();
-</script>
-<!-- =============== /WIDGET ================= -->
-
 </body>
 </html>
