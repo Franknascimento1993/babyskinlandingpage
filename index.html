@@ -527,7 +527,7 @@
         toastTTL: 6000         // tempo de vida do toast
       };
 
-      const NAMES = ['Ana','Bruna','Camila','Daniela','Eduarda','Fernanda','Gabriela','Helena','Isabela','Júlia','Karina','Larissa','Marina','Natália','Olívia','Patrícia','Rafaela','Sabrina','Talita','Valentina','Yasmim','Zoe','Bianca','Carolina','Letícia','Nicole','Sophia','Manuela','Luiza','Alice','Laura','Beatriz','Clara','Lívia','Lorena','Heloísa','Ester','Agatha'];
+      const NAMES = ['Ana Maria','Bruna','Camila','Daniela','Eduarda','Fernanda','Gabriela','Helena','Isabela','Júlia','Karina','Larissa','Marina','Natália','Olívia','Patrícia','Rafaela','Sabrina','Talita','Valentina','Yasmim','Zildane','Bianca','Carolina','Letícia','Nicole','Sophia','Manuela','Luiza','Alice','Laura','Beatriz','Clara','Lívia','Lorena','Heloísa','Ester','Agatha'];
       const CITIES = ['São Paulo, SP','Rio de Janeiro, RJ','Belo Horizonte, MG','Brasília, DF','Curitiba, PR','Porto Alegre, RS','Florianópolis, SC','Salvador, BA','Fortaleza, CE','Recife, PE','Goiânia, GO','Vitória, ES','Manaus, AM','Belém, PA','Natal, RN','Campinas, SP','Ribeirão Preto, SP','Santos, SP','São José dos Campos, SP','Sorocaba, SP'];
 
       const clamp=(n,min,max)=> Math.max(min, Math.min(max, n));
@@ -584,7 +584,7 @@
 
         const badge = document.createElement('div');
         badge.className = 't-badge';
-        const price = 89.90; // altere se quiser
+        const price = 99.90; // altere se quiser
         badge.textContent = `R$ ${(price*qty).toFixed(2)}`;
 
         t.appendChild(av); t.appendChild(text); t.appendChild(badge);
@@ -593,17 +593,31 @@
         setTimeout(()=>{ t.style.opacity='.0'; t.style.transform='translateY(8px)'; setTimeout(()=>t.remove(), 400); }, CONFIG.toastTTL);
       }
 
-      function schedulePurchase(){
-        if(CONFIG.stock <= 0) return;
-        const delay = rand(CONFIG.minDelayMs, CONFIG.maxDelayMs);
-        setTimeout(()=>{
-          const qty = clamp(rand(CONFIG.minPerOrder, CONFIG.maxPerOrder), 1, CONFIG.stock);
-          CONFIG.stock -= qty;
-          renderStock();
-          showToast({name:pick(NAMES), city:pick(CITIES), qty, payment: Math.random()<.6?'PIX':'Cartão'});
-          schedulePurchase();
-        }, delay);
-      }
+      function atualizarWidget(){
+  const compras = Math.floor(Math.random() * 3) + 1; // Simula compras
+  estoque = Math.max(0, estoque - compras); // Atualiza estoque
+  const pessoas = Math.floor(Math.random() * 15) + 5; // Pessoas vendo
+  const nome = nomesMulheres[Math.floor(Math.random() * nomesMulheres.length)];
+
+  // Só mostra se o estoque estiver baixo
+  if (estoque <= 20 && estoque > 0) {
+    widget.innerHTML = `
+      <div style="background:rgba(255,255,255,0.08);padding:10px 14px;border-radius:12px;font-size:14px;text-align:center">
+        <b>${nome}</b> comprou ${compras} unidade(s) agora • ${pessoas} pessoas vendo agora<br>
+        <b style="color:#ff4d6d">Atenção: Estoque baixo!</b> Restam apenas <b>${estoque}</b> unidades.
+      </div>
+    `;
+  } else if (estoque <= 0) {
+    widget.innerHTML = `
+      <div style="background:rgba(255,255,255,0.08);padding:10px 14px;border-radius:12px;font-size:14px;text-align:center">
+        <b style="color:#ff4d6d">Produto esgotado!</b>
+      </div>
+    `;
+  } else {
+    widget.innerHTML = "";
+  }
+}
+
 
       // Inicializa
       renderStock();
