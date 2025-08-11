@@ -582,10 +582,10 @@
         text.appendChild(title);
         text.appendChild(line);
 
-        const badge = document.createElement('div');
-        badge.className = 't-badge';
-        const price = 99.90; // altere se quiser
-        badge.textContent = `R$ ${(price*qty).toFixed(2)}`;
+        const prices = [99.90, 179.90, 229.90];        // unitários possíveis
+const price = prices[Math.floor(Math.random()*prices.length)];
+badge.textContent = formatBRL.format(price * qty);
+
 
         t.appendChild(av); t.appendChild(text); t.appendChild(badge);
         elToasts.prepend(t);
