@@ -518,7 +518,7 @@
         elFill.style.width = (pct*100).toFixed(0)+'%';
 
         if(CONFIG.stock <= 0){
-          elBadge.textContent = 'Esgotado';
+          elBadge.textContent = 'Esgotando';
           elBadge.style.background = 'rgba(239,68,68,.18)';
           elBadge.style.borderColor = 'rgba(239,68,68,.45)';
           return;
@@ -528,7 +528,7 @@
           elBadge.style.background = 'rgba(245,158,11,.16)';
           elBadge.style.borderColor = 'rgba(245,158,11,.42)';
         }else{
-          elBadge.textContent = 'Disponível';
+          elBadge.textContent = 'Esgotando;
           elBadge.style.background = 'rgba(53,209,138,.12)';
           elBadge.style.borderColor = 'rgba(53,209,138,.35)';
         }
