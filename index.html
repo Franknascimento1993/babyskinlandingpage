@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Baby Skin – Hidratação Noturna Inteligente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0511; --ink:#ffffff; --muted:#efd7e6;
+      --pink:#e4477a; --pink-soft:rgba(228,71,122,.18);
+      --purple:#833AB4; --lilas:#eec4ff; --stroke:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;color:var(--ink);
+      background:
+        radial-gradient(1200px 650px at 15% 90%, rgba(252,175,69,.12), transparent 62%),
+        radial-gradient(1000px 560px at 88% -12%, rgba(131,58,180,.22), transparent 64%),
+        var(--bg);
+      font-family:Manrope,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial
+    }
+    a{color:inherit;text-decoration:none}
+    img{display:block;max-width:100%;height:auto}
+
+    /* Evita que o widget fixe por cima do CTA no mobile */
+    body{padding-bottom:env(safe-area-inset-bottom,0)}
+    @media (max-width:520px){
+      body{padding-bottom:120px}
+    }
+
+    .wrap{max-width:1060px;margin:0 auto;padding:22px}
+    header{display:flex;align-items:center;justify-content:center;padding:10px 0}
+    .section{padding:clamp(56px,7vw,92px) 0}
+    .center{text-align:center}
+    h1,h2,h3,p{margin:0}
+    .h2{font-family:"Playfair Display",serif;font-weight:800;font-size:clamp(22px,3vw,30px);margin-bottom:14px}
+    .note{color:var(--muted);font-size:15px;line-height:1.7}
+
+    /* Logo topo */
+    .brand-logo{display:inline-block;width:48px;opacity:.95;filter:drop-shadow(0 6px 18px rgba(131,58,180,.25))}
+    .brand-logo img{width:100%;border-radius:10px}
+
+    /* Hero */
+    .kicker{display:inline-flex;gap:10px;align-items:center;padding:8px 14px;border-radius:999px;
+      background:linear-gradient(90deg, rgba(131,58,180,.18), var(--pink-soft));color:#ffe9ff;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.9px}
+    h1{font-family:"Playfair Display",serif;font-weight:800;line-height:1.04;font-size:clamp(32px,6vw,62px);max-width:860px;margin:12px auto 10px}
+    h1.lux em.ink-grad{
+      background: linear-gradient(135deg, var(--pink) 8%, var(--purple) 92%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      font-style: normal;
+    }
+    .sub{color:var(--muted);font-size:18px;line-height:1.75;max-width:820px;margin:0 auto clamp(18px,3vw,26px)}
+
+    /* Banners */
+    .hero-banners{
+      position:relative;background:linear-gradient(180deg,rgba(131,58,180,.22),rgba(225,48,108,.18));
+      border:1px solid var(--stroke);border-radius:20px;padding:26px;overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);margin:16px 0;min-height:84px;
+    }
+    .hero-banner{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:translateY(8px);transition:opacity .8s ease,transform .8s ease}
+    .hero-banner.active{opacity:1;transform:translateY(0)}
+    .hero-text{font-weight:800;font-size:clamp(18px,3.4vw,26px);letter-spacing:.2px}
+    .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:8px;pointer-events:none}
+    .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.28);transition:transform .25s,background .25s}
+    .dot.active{background:linear-gradient(135deg,var(--purple),var(--pink));transform:scale(1.2)}
+
+    /* Ribbon */
+    .ribbon{margin:16px 0;background:rgba(255,255,255,.06);border:1px solid var(--stroke);border-radius:16px;overflow:hidden}
+    .ribbon-track{display:flex;gap:22px;align-items:center;white-space:nowrap;animation:scroll 28s linear infinite;padding:12px}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);font-weight:700}
+    .chip i{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));display:inline-block}
+    @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    /* Imagens */
+    .image-slot{width:100%;aspect-ratio:16/9;border:1px dashed var(--stroke);border-radius:22px;overflow:hidden;background:linear-gradient(180deg,rgba(35,17,51,.55),rgba(35,17,51,.25));box-shadow:0 30px 90px rgba(0,0,0,.38);margin:18px 0}
+    .image-slot img{width:100%;height:100%;object-fit:cover}
+
+    /* Painéis, grids, cards */
+    .panel{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:26px;margin-bottom:clamp(28px,4vw,44px)}
+    .panel.dark{background:linear-gradient(180deg,rgba(35,17,51,.55),rgba(35,17,51,.25));border-color:var(--stroke)}
+    .grid-3{display:grid;gap:clamp(16px,3vw,26px);grid-template-columns:repeat(3,1fr)}
+    .grid-2{display:grid;gap:clamp(16px,3vw,26px);grid-template-columns:repeat(2,1fr)}
+    .card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:22px;transition:transform .35s,border-color .35s}
+    .card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.22)}
+
+    /* Ingredientes */
+    .ingredients{display:grid;gap:clamp(14px,3vw,22px);grid-template-columns:repeat(3,1fr)}
+    .ing{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:18px;text-align:left;transition:transform .3s ease,border-color .3s}
+    .ing:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.22)}
+    .ing .name{font-weight:900;margin-bottom:6px}
+    .ing .desc{color:#efd7e6;font-size:14px;line-height:1.7}
+
+    /* Planos */
+    .plans{display:grid;gap:clamp(14px,3vw,22px);grid-template-columns:repeat(3,1fr)}
+    .plan{background:linear-gradient(180deg,rgba(35,17,51,.55),rgba(35,17,51,.25));border:1px solid var(--stroke);border-radius:22px;padding:22px;text-align:center;transition:transform .35s,box-shadow .35s;cursor:pointer}
+    .plan:hover{transform:translateY(-6px);box-shadow:0 22px 80px rgba(131,58,180,.25)}
+    .plan.best{border-color:rgba(225,48,108,.5)}
+    .title{font-weight:900;letter-spacing:.3px;margin-bottom:4px}
+    .bottles{font-size:13px;color:#efd7e6}
+    .save{display:inline-block;background:rgba(225,48,108,.18);border:1px solid rgba(225,48,108,.45);color:#ffe9f3;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;margin-bottom:6px}
+    .price{display:grid;gap:6px;justify-items:center;margin:10px 0}
+    .price-old{color:rgba(255,255,255,.6);text-decoration:line-through;font-weight:700}
+    .price-install{font-size:28px;font-weight:900}
+    .price-cash{font-size:14px;color:#ffe2ef}
+
+    /* Botões com leve movimento */
+    .btn, .buy{
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color:#fff;font-weight:900;padding:10px 18px;border-radius:999px;
+      box-shadow:0 6px 18px var(--pink-soft);
+      transition:transform .18s ease, box-shadow .25s ease;
+      text-transform:uppercase;letter-spacing:.4px;font-size:14px;line-height:1.2;
+      white-space:nowrap;display:inline-block;text-align:center;-webkit-tap-highlight-color:transparent;user-select:none;
+    }
+    .btn:hover, .buy:hover{ transform:translateY(-2px) scale(1.02); box-shadow:0 10px 28px rgba(228,71,122,.42); }
+    .btn-row{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px }
+
+    /* Animação sutil e iluminada nos botões */
+    @keyframes pulseGlow {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 6px 18px var(--pink-soft), 0 0 0 rgba(228,71,122,0.4);
+      }
+      50% {
+        transform: scale(1.03);
+        box-shadow: 0 6px 22px rgba(228,71,122,0.6), 0 0 12px rgba(228,71,122,0.6);
+      }
+    }
+    .btn, .buy { animation: pulseGlow 2.8s ease-in-out infinite; }
+
+    /* Bandeiras (cores de marca) */
+    .payments{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:8px}
+    .flag{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:6px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);
+      font-size:12px;font-weight:900;letter-spacing:.3px;
+      background:rgba(255,255,255,.06);color:#fff
+    }
+    .flag.visa{ background:linear-gradient(180deg,#1a1f71,#3a48a4) }
+    .flag.mastercard{ background:linear-gradient(90deg,#ff5f00 0 35%,#eb001b 35% 67%,#f79e1b 67% 100%) }
+    .flag.elo{ background:linear-gradient(180deg,#111,#2a2a2a) }
+    .flag.hipercard{ background:linear-gradient(180deg,#8b1c2e,#a42539) }
+    .flag.amex{ background:linear-gradient(180deg,#2e77bb,#1d5f9e) }
+    .flag.pix{ background:linear-gradient(135deg,#36c996,#25a57e); color:#052d22 }
+    .flag.boleto{ background:linear-gradient(180deg,#444,#222) }
+
+    /* Créditos */
+    .credit{display:grid;place-items:center;gap:6px;margin:16px 0 28px}
+    .credit .credit-title{font-family:"Playfair Display",serif;font-weight:800;letter-spacing:.4px;line-height:1.25;text-align:center}
+    .credit-logo img{width:64px;border-radius:10px;filter:drop-shadow(0 10px 30px rgba(131,58,180,.25))}
+
+    /* Reveal */
+    .fade-up{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
+    .in-view{opacity:1;transform:translateY(0)}
+
+    /* Widget */
+    .sales-widget{
+      position:fixed;right:22px;bottom:22px;z-index:9999;
+      display:flex;flex-direction:column;gap:10px;max-width:340px;
+      backdrop-filter:saturate(140%) blur(10px);
+    }
+    .sw-card{
+      background:linear-gradient(180deg, rgba(18,18,24,.92), rgba(18,18,24,.86));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;padding:14px 16px;color:#fff;
+      box-shadow:0 18px 40px rgba(0,0,0,.45);
+    }
+    .sw-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .sw-dot{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%, var(--lilas), var(--pink));box-shadow:0 0 16px rgba(228,71,122,.5)}
+    .sw-title{font-weight:900;letter-spacing:.2px;font-size:14px}
+    .sw-row{display:flex;justify-content:space-between;align-items:center;margin:8px 0 10px}
+    .sw-badge{font-size:11px;font-weight:900;padding:6px 10px;border-radius:999px;background:rgba(53,209,138,.12);border:1px solid rgba(53,209,138,.35)}
+    .sw-viewers{font-size:12px;color:var(--muted)}
+    .sw-bar{position:relative;height:10px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .sw-fill{position:absolute;inset:0;width:100%;background:linear-gradient(90deg,var(--pink), var(--purple), var(--lilas));box-shadow:0 0 20px rgba(228,71,122,.32)}
+    .sw-foot{font-size:11px;color:var(--muted);margin-top:6px}
+    
+
+    /* Toasts */
+    .toasts{display:flex;flex-direction:column;gap:10px}
+    .toast{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(18,18,24,.92);border:1px solid rgba(255,255,255,.06);box-shadow:0 10px 30px rgba(0,0,0,.35);transform:translateY(10px);opacity:0;animation:slideIn .4s ease forwards}
+    @keyframes slideIn{to{transform:translateY(0);opacity:1}}
+    .avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:white;background:linear-gradient(180deg,var(--pink),var(--purple))}
+    .t-name{font-weight:900}
+    .t-line{font-size:12px;color:var(--muted)}
+    .t-badge{font-size:11px;font-weight:900;padding:6px 10px;border-radius:999px;background:rgba(53,209,138,.12);border:1px solid rgba(53,209,138,.35)}
+
+    /* Mobile & breakpoints (empilhamento seguro) */
+    @media (max-width:1024px){
+      .grid-3{grid-template-columns:repeat(2,1fr)}
+      .ingredients,.plans{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:680px){
+      .grid-2{grid-template-columns:1fr}
+      .grid-3{grid-template-columns:1fr}
+      .ingredients,.plans{grid-template-columns:1fr}
+      .panel{padding:18px}
+      .hero-banners{padding:18px;min-height:76px}
+    }
+
+    /* Botões responsivos */
+    @media (max-width:520px){
+      .btn-row{ flex-direction:column; gap:12px; align-items:stretch; }
+      .btn-row a{ width:100%; max-width:none; flex:0 0 auto; padding:12px 14px; }
+      .sales-widget{left:14px; right:14px; bottom:12px; max-width:none; transform: scale(.9); transform-origin: bottom right;}
+      .brand-logo{width:40px}
+      .credit-logo img{width:56px}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{animation:none !important;transition:none !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header com LOGO -->
+    <header class="fade-up">
+      <a class="brand-logo" href="#top" aria-label="Baby Skin">
+        <img src="logo-sdb.png" alt="Logo SONO DA BELEZA – Baby Skin">
+      </a>
+    </header>
+
+    <!-- HERO -->
+    <section class="section center fade-up" id="top">
+      <div class="kicker">Ritual Noturno + Água</div>
+      <h1 class="lux">Revele <em class="ink-grad">O BRILHO</em> que sua pele merece.</h1>
+      <p class="sub">Hidratação inteligente e profunda enquanto você dorme — simples, consistente e com ativos premium que trabalham a favor da sua pele.</p>
+
+      <div class="hero-banners" id="heroBanners" aria-live="polite">
+        <div class="hero-banner active"><div class="hero-text">💧 Hidratação profunda enquanto você dorme</div></div>
+        <div class="hero-banner"><div class="hero-text">✨ Pele mais firme e viçosa em 30–60 dias de uso</div></div>
+        <div class="hero-banner"><div class="hero-text">🌙 Ritual simples: 1 dose + 1 copo de água antes de dormir</div></div>
+        <div class="hero-banner"><div class="hero-text">🛡️ Antioxidantes que acalmam a inflamação invisível</div></div>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+      </div>
+
+      <div class="ribbon"><div class="ribbon-track">
+        <span class="chip"><i></i> Colágeno + Vitamina C</span>
+        <span class="chip"><i></i> Ácido Hialurônico</span>
+        <span class="chip"><i></i> Trans-Resveratrol</span>
+        <span class="chip"><i></i> Zinco Bisglicinato</span>
+        <span class="chip"><i></i> Astaxantina</span>
+        <span class="chip"><i></i> Frete Grátis (lote atual)</span>
+        <span class="chip"><i></i> 7 dias garantia</span>
+        <span class="chip"><i></i> Colágeno + Vitamina C</span>
+        <span class="chip"><i></i> Ácido Hialurônico</span>
+        <span class="chip"><i></i> Trans-Resveratrol</span>
+        <span class="chip"><i></i> Zinco Bisglicinato</span>
+        <span class="chip"><i></i> Astaxantina</span>
+        <span class="chip"><i></i> Frete Grátis (lote atual)</span>
+        <span class="chip"><i></i> 7 dias garantia</span>
+      </div></div>
+
+      <div class="image-slot" aria-label="Imagem principal">
+        <img
+          src="/baby-skin-hero.webp?v=1"
+          onerror="this.onerror=null;this.src='/baby-skin-hero.jpg?v=1'"
+          width="1980" height="1080"
+          alt="Três frascos do Baby Skin sobre fundo rosa com flores brancas"
+          loading="eager" fetchpriority="high" decoding="async"
+        />
+      </div>
+
+      <div class="btn-row">
+        <a class="btn" href="#porque-funciona">Entenda por que funciona</a>
+        <a class="btn" href="#checkout">Começar hoje mesmo</a>
+      </div>
+      <p class="note" style="margin-top:10px">Resultados melhores com uso contínuo por 30–60 dias.</p>
+    </section>
+
+    <!-- Por que funciona (resumo) -->
+    <section id="porque-funciona" class="section center fade-up">
+      <div class="panel dark">
+        <h2 class="h2">Por que o Baby Skin é eficaz?</h2>
+        <p class="note" style="max-width:860px;margin:8px auto 18px">
+          Enquanto hidratantes comuns agem só na superfície, o <b>Baby Skin</b> combina <b>peptídeos de colágeno</b>, <b>ácido hialurônico</b>, <b>vitamina C</b>, <b>astaxantina</b>, <b>trans-resveratrol</b> e <b>zinco bisglicinato</b> — ativos que trabalham em sinergia durante o <b>sono</b>, quando a pele está mais receptiva à <b>reparação</b> e à <b>hidratação</b>.
+        </p>
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="h2">Produtos comuns do mercado</h3>
+            <p class="note">• Ação superficial<br>• <b>Baixa concentração</b> de ativos<br>• Resultados lentos e pouco consistentes</p>
+          </div>
+          <div class="card">
+            <h3 class="h2">Baby Skin (hidratação noturna)</h3>
+            <p class="note">• <b>Ativos de alta performance</b> de dentro para fora<br>• Sinergia noturna potencializando a <b>reparação</b><br>• Rotina simples: <b>12 gotas</b> em <b>200ml</b> antes de dormir</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ingredientes -->
+    <section class="section center fade-up">
+      <div class="panel dark">
+        <h2 class="h2">Ingredientes premium — como cada um age</h2>
+        <div class="ingredients">
+          <div class="ing"><div class="name">Peptídeos de Colágeno Hidrolisado</div><div class="desc">Blocos para síntese de colágeno: ajuda na <b>firmeza</b> e <b>elasticidade</b>.</div></div>
+          <div class="ing"><div class="name">Vitamina C</div><div class="desc">Antioxidante que <b>potencializa o colágeno</b> e contribui para tom mais <b>uniforme</b>.</div></div>
+          <div class="ing"><div class="name">Ácido Hialurônico</div><div class="desc">Atrai e retém água nas camadas cutâneas, promovendo <b>viço</b> e <b>maciez</b>.</div></div>
+          <div class="ing"><div class="name">Trans-Resveratrol</div><div class="desc">Apoia defesas antioxidantes, ajudando a <b>reduzir estresse oxidativo</b>.</div></div>
+          <div class="ing"><div class="name">Zinco Bisglicinato</div><div class="desc">Auxilia no <b>equilíbrio</b> da pele e dá suporte a <b>cabelos e unhas</b>.</div></div>
+          <div class="ing"><div class="name">Astaxantina</div><div class="desc">Antioxidante potente associado a um <b>glow natural</b>.</div></div>
+        </div>
+        <div class="btn-row"><a class="btn" href="#checkout">Garantir meu Baby Skin</a></div>
+      </div>
+    </section>
+
+    <!-- Planos -->
+    <section id="checkout" class="section center fade-up">
+      <div class="panel">
+        <h2 class="h2">Escolha o seu tratamento</h2>
+        <div class="plans">
+          <div class="plan" data-link="https://checkout-plano1.com">
+            <div class="title">1 Frasco</div>
+            <div class="bottles">30 dias de uso</div>
+            <div class="price">
+              <div class="price-old">R$ 159,90</div>
+              <div class="price-install">12x de R$ 9,90 <small>no cartão</small></div>
+              <div class="price-cash">ou R$ 99,90 à vista no Pix</div>
+            </div>
+            <p class="note">Para testar o ritual.</p>
+            <a class="btn buy" href="#" target="_blank" rel="noopener">Comprar agora</a>
+          </div>
+          <div class="plan best" data-link="https://checkout-plano2.com">
+            <div class="save">Mais vendido • Economize</div>
+            <div class="title">2 Frascos</div>
+            <div class="bottles">60 dias de uso</div>
+            <div class="price">
+              <div class="price-old">R$ 299,90</div>
+              <div class="price-install">12x de R$ 16,90 <small>no cartão</small></div>
+              <div class="price-cash">ou R$ 179,90 à vista no Pix</div>
+            </div>
+            <p class="note">Resultados consistentes + frete grátis.</p>
+            <a class="btn buy" href="#" target="_blank" rel="noopener">Comprar agora</a>
+          </div>
+          <div class="plan" data-link="https://checkout-plano3.com">
+            <div class="title">3 Frascos</div>
+            <div class="bottles">90 dias de uso</div>
+            <div class="price">
+              <div class="price-old">R$ 429,90</div>
+              <div class="price-install">12x de R$ 21,90 <small>no cartão</small></div>
+              <div class="price-cash">ou R$ 229,90 à vista no Pix</div>
+            </div>
+            <p class="note">Melhor custo por dose.</p>
+            <a class="btn buy" href="#" target="_blank" rel="noopener">Comprar agora</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section center fade-up">
+      <div class="panel dark">
+        <h2 class="h2">Perguntas Frequentes</h2>
+        <div class="faq" role="list" style="display:grid;gap:14px">
+          <div class="faq-item" role="listitem" style="border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.04);overflow:hidden">
+            <button class="faq-q" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;font-weight:800;width:100%;background:transparent;color:#fff;border:0">
+              <span style="flex:1;text-align:left">Em quanto tempo vejo resultados?</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M11 4h2v16h-2zM4 11h16v2H4z"/></svg>
+            </button>
+            <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;color:var(--muted);padding:0 18px">
+              <p>Geralmente entre <b>30 e 60 dias</b> de uso contínuo, combinado com boa hidratação e sono.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" role="listitem" style="border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.04);overflow:hidden">
+            <button class="faq-q" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;font-weight:800;width:100%;background:transparent;color:#fff;border:0">
+              <span style="flex:1;text-align:left">Posso usar junto com minha rotina de skincare?</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M11 4h2v16h-2zM4 11h16v2H4z"/></svg>
+            </button>
+            <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;color:var(--muted);padding:0 18px">
+              <p>Sim. O Baby Skin atua <b>de dentro para fora</b>, complementando séruns e cremes tópicos.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" role="listitem" style="border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.04);overflow:hidden">
+            <button class="faq-q" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;font-weight:800;width:100%;background:transparent;color:#fff;border:0">
+              <span style="flex:1;text-align:left">Tem contraindicações?</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M11 4h2v16h-2zM4 11h16v2H4z"/></svg>
+            </button>
+            <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;color:var(--muted);padding:0 18px">
+              <p>Se estiver grávida, amamentando ou em tratamento, consulte seu profissional de saúde antes de usar.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" role="listitem" style="border:1px solid var(--stroke);border-radius:16px;background:rgba(255,255,255,.04);overflow:hidden">
+            <button class="faq-q" aria-expanded="false" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;cursor:pointer;font-weight:800;width:100%;background:transparent;color:#fff;border:0">
+              <span style="flex:1;text-align:left">Como potencializar os resultados?</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M11 4h2v16h-2zM4 11h16v2H4z"/></svg>
+            </button>
+            <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;color:var(--muted);padding:0 18px">
+              <p>Mantenha o <b>ritual noturno</b>, <b>sono de qualidade</b> e <b>200–300ml de água</b> junto da dose.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="center fade-up">
+      <div class="panel dark" style="margin-bottom:18px">
+        <h2 class="h2">Modo de uso</h2>
+        <p class="note" style="margin-top:6px">Tome <b>12 gotas</b> diluídas em <b>200ml de água</b> <b>à noite</b>, antes de dormir. Use diariamente e mantenha boa hidratação ao longo do dia.</p>
+      </div>
+      <div class="panel dark" style="margin-bottom:18px">
+        <h2 class="h2">Sobre nós — SONO DA BELEZA</h2>
+        <p class="note" style="margin-top:6px">Acreditamos no poder do <b>sono reparador</b> aliado à <b>hidratação inteligente</b>. Desenvolvemos o Baby Skin para simplificar seu ritual noturno com ingredientes premium e uma experiência minimalista — porque beleza começa quando você descansa.</p>
+      </div>
+      <div class="payments" style="margin-bottom:14px">
+        <span class="flag visa">VISA</span>
+        <span class="flag mastercard">MASTERCARD</span>
+        <span class="flag elo">ELO</span>
+        <span class="flag hipercard">HIPERCARD</span>
+        <span class="flag amex">AMEX</span>
+        <span class="flag pix">PIX</span>
+        <span class="flag boleto">BOLETO</span>
+      </div>
+      <div class="quality" style="margin-bottom:12px;display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06)">
+        <span class="qmark" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--purple));display:grid;place-items:center;font-weight:900">✓</span>
+        <strong>Selo de Qualidade Baby Skin</strong>
+        <span class="note">pagamento seguro e garantia de 7 dias</span>
+      </div>
+    </footer>
+
+    <!-- Créditos -->
+    <section class="credit fade-up" aria-label="Crédito do projeto">
+      <div class="credit-title">
+        Um projeto desenvolvido por:<br>
+        <span style="font-size:1.06em">SONO DA BELEZA</span>
+      </div>
+      <span class="credit-logo">
+        <img src="logo-sdb.png?v=9" alt="Logo SONO DA BELEZA">
+      </span>
+    </section>
+
+  </div><!-- /wrap -->
+
+  <!-- Widget de Vendas e Estoque -->
+  <aside class="sales-widget" id="salesWidget" aria-label="Status de estoque e interesse">
+    <div class="sw-card">
+      <div class="sw-head">
+        <span class="sw-dot" aria-hidden="true"></span>
+        <div class="sw-title">Estoque em tempo real</div>
+      </div>
+      <div class="sw-row">
+        <div class="sw-viewers" id="swViewers">—</div>
+        <div class="sw-badge" id="swBadge">Disponível</div>
+      </div>
+      <div class="sw-bar" aria-hidden="true">
+        <div class="sw-fill" id="swFill"></div>
+      </div>
+      <div class="sw-foot" id="swFoot">*Atualização automática</div>
+      <div class="toasts" id="swToasts" aria-live="polite" aria-relevant="additions text"></div>
+    </div>
+  </aside>
+
+  <script>
+    // Reveal on scroll
+    const reveal = () => {
+      document.querySelectorAll('.fade-up').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < innerHeight*0.9) el.classList.add('in-view');
+      });
+    };
+    addEventListener('load', reveal, {once:true});
+    addEventListener('scroll', reveal, {passive:true});
+
+    // Vincula links de compra (+ torna o card inteiro clicável no mobile)
+    document.querySelectorAll('.plan').forEach(p=>{
+      const link=p.getAttribute('data-link');
+      const a=p.querySelector('.buy');
+      if(link&&a){ a.href=link; }
+      p.addEventListener('click', (e)=>{
+        if (!link) return;
+        if (!e.target.closest('.buy')) window.open(link,'_blank','noopener');
+      });
+    });
+
+    // Hero banners (pausa automática em reduce motion)
+    const banners=[...document.querySelectorAll('.hero-banner')];
+    const dotsWrap=document.getElementById('dots');
+    banners.forEach((_,i)=>{ const d=document.createElement('span'); d.className='dot'+(i===0?' active':''); dotsWrap.appendChild(d);});
+    const dots=[...dotsWrap.children]; let i=0;
+    const next=()=>{ banners[i].classList.remove('active'); dots[i].classList.remove('active'); i=(i+1)%banners.length; banners[i].classList.add('active'); dots[i].classList.add('active'); };
+    let t;
+    const start=()=> t=setInterval(next,3000);
+    const stop =()=> clearInterval(t);
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){ start(); }
+    const hb=document.getElementById('heroBanners');
+    hb.addEventListener('mouseenter',stop); hb.addEventListener('mouseleave',()=>{ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){ start(); }});
+
+    // FAQ toggle
+    document.querySelectorAll('.faq-item .faq-q').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const item=btn.parentElement;
+        const open=item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open?'true':'false');
+        const ans=item.querySelector('.faq-a');
+        ans.style.maxHeight = open ? ans.scrollHeight + 'px' : '0';
+        ans.style.paddingBottom = open ? '16px' : '0';
+      });
+    });
+
+    // ===== WIDGET: Simulação compras + estoque em tempo real (com toasts) =====
+    (function(){
+      const elViewers = document.getElementById('swViewers');
+      const elFill    = document.getElementById('swFill');
+      const elBadge   = document.getElementById('swBadge');
+      const elSoldout = document.getElementById('swSoldOut');
+      const elToasts  = document.getElementById('swToasts');
+
+      const CONFIG = {
+        initialStock: 120,     // estoque inicial
+        stock: 120,            // estoque atual
+        minPerOrder: 1,        // mínimo por compra
+        maxPerOrder: 3,        // máximo por compra
+        minDelayMs: 5000,      // menor intervalo entre compras
+        maxDelayMs: 11000,     // maior intervalo entre compras
+        minViewers: 21,        // viewers mínimo
+        maxViewers: 89,        // viewers máximo
+        lowStockThreshold: 18, // quando mostrar "Baixo estoque"
+        toastTTL: 6000         // tempo de vida do toast
+      };
+
+      const NAMES = ['Ana','Bruna','Camila','Daniela','Eduarda','Fernanda','Gabriela','Helena','Isabela','Júlia','Karina','Larissa','Marina','Natália','Olívia','Patrícia','Rafaela','Sabrina','Talita','Valentina','Yasmim','Zoe','Bianca','Carolina','Letícia','Nicole','Sophia','Manuela','Luiza','Alice','Laura','Beatriz','Clara','Lívia','Lorena','Heloísa','Ester','Agatha'];
+      const CITIES = ['São Paulo, SP','Rio de Janeiro, RJ','Belo Horizonte, MG','Brasília, DF','Curitiba, PR','Porto Alegre, RS','Florianópolis, SC','Salvador, BA','Fortaleza, CE','Recife, PE','Goiânia, GO','Vitória, ES','Manaus, AM','Belém, PA','Natal, RN','Campinas, SP','Ribeirão Preto, SP','Santos, SP','São José dos Campos, SP','Sorocaba, SP'];
+
+      const clamp=(n,min,max)=> Math.max(min, Math.min(max, n));
+      const rand =(min,max)=> Math.floor(Math.random()*(max-min+1))+min;
+      const pick = arr=> arr[Math.floor(Math.random()*arr.length)];
+      const initials = name => name.split(/\s+/).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+
+      function renderStock(){
+        const pct = clamp(CONFIG.stock/CONFIG.initialStock, 0, 1);
+        elFill.style.width = (pct*100).toFixed(0)+'%';
+
+        if(CONFIG.stock <= 0){
+          elBadge.textContent = 'Esgotado';
+          elBadge.style.background = 'rgba(239,68,68,.18)';
+          elBadge.style.borderColor = 'rgba(239,68,68,.45)';
+          elSoldout.style.display = 'inline-flex';
+          return;
+        }
+        if(CONFIG.stock <= CONFIG.lowStockThreshold){
+          elBadge.textContent = 'Baixo estoque';
+          elBadge.style.background = 'rgba(245,158,11,.16)';
+          elBadge.style.borderColor = 'rgba(245,158,11,.42)';
+        }else{
+          elBadge.textContent = 'Disponível';
+          elBadge.style.background = 'rgba(53,209,138,.12)';
+          elBadge.style.borderColor = 'rgba(53,209,138,.35)';
+        }
+      }
+
+      function tickViewers(){
+        const v = rand(CONFIG.minViewers, CONFIG.maxViewers);
+        elViewers.textContent = `${v} pessoas vendo agora`;
+      }
+
+      function showToast({name, city, qty, payment}){
+        const t = document.createElement('div');
+        t.className = 'toast';
+
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        av.textContent = initials(name);
+
+        const text = document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 't-name';
+        title.textContent = `${name} comprou ${qty} ${qty>1?'unidades':'unidade'}`;
+
+        const line = document.createElement('div');
+        line.className = 't-line';
+        line.textContent = `${city} • ${payment} • agora mesmo`;
+
+        text.appendChild(title);
+        text.appendChild(line);
+
+        const badge = document.createElement('div');
+        badge.className = 't-badge';
+        const price = 89.90; // altere se quiser
+        badge.textContent = `R$ ${(price*qty).toFixed(2)}`;
+
+        t.appendChild(av); t.appendChild(text); t.appendChild(badge);
+        elToasts.prepend(t);
+
+        setTimeout(()=>{ t.style.opacity='.0'; t.style.transform='translateY(8px)'; setTimeout(()=>t.remove(), 400); }, CONFIG.toastTTL);
+      }
+
+      function schedulePurchase(){
+        if(CONFIG.stock <= 0) return;
+        const delay = rand(CONFIG.minDelayMs, CONFIG.maxDelayMs);
+        setTimeout(()=>{
+          const qty = clamp(rand(CONFIG.minPerOrder, CONFIG.maxPerOrder), 1, CONFIG.stock);
+          CONFIG.stock -= qty;
+          renderStock();
+          showToast({name:pick(NAMES), city:pick(CITIES), qty, payment: Math.random()<.6?'PIX':'Cartão'});
+          schedulePurchase();
+        }, delay);
+      }
+
+      // Inicializa
+      renderStock();
+      tickViewers();
+      setInterval(tickViewers, 4000);
+      schedulePurchase();
+
+      // API simples pra testes no console
+      window.BabySkinWidget = {
+        setStock(n){ CONFIG.stock = Math.max(0, Number(n)||0); renderStock(); },
+        addStock(n){ CONFIG.stock = Math.min(9999, CONFIG.stock + Math.max(0, Number(n)||0)); renderStock(); },
+        buy(q){ const qty = Math.min(CONFIG.stock, Math.max(1, Number(q)||1)); if(qty>0){ CONFIG.stock -= qty; renderStock(); showToast({name:pick(NAMES), city:pick(CITIES), qty, payment:'Cartão'});} },
+        config: CONFIG
+      };
+    })();
+  </script>
+</body>
+</html>
