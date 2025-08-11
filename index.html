@@ -424,7 +424,7 @@
       const a=p.querySelector('.buy'); if(link&&a){ a.href=link; }
     });
 
-    // ===== Hero banners (50% mais rápido: 2000ms)
+    // ===== Hero banners (50% mais rápido: 3000ms)
     const banners=[...document.querySelectorAll('.hero-banner')];
     const dotsWrap=document.getElementById('dots');
     banners.forEach((_,i)=>{ const d=document.createElement('span'); d.className='dot'+(i===0?' active':''); dotsWrap.appendChild(d);});
